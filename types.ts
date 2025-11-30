@@ -21,13 +21,6 @@ export interface TraineeProfile {
   courses: CourseRecord[];
 }
 
-export interface GeminiAnalysis {
-  summary: string;
-  estimatedGPA: string;
-  strengths: string[];
-  recommendation: string;
-}
-
 export enum AppState {
   UPLOAD = 'UPLOAD',
   SEARCH = 'SEARCH',

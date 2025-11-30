@@ -9,6 +9,19 @@ import { TraineeProfile, AppState } from './types';
 
 const SUPERVISOR_PASSWORD = '0558882711';
 
+// Error Boundary for basic runtime safety
+class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return <div className="p-8 text-center text-red-600">حدث خطأ غير متوقع. يرجى تحديث الصفحة.</div>;
+    return this.props.children;
+  }
+}
+
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.SEARCH);
   const [trainees, setTrainees] = useState<TraineeProfile[]>([]);
@@ -207,6 +220,7 @@ const App: React.FC = () => {
   };
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans" dir="rtl">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10 print:hidden shadow-sm">
@@ -242,38 +256,9 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Left Side: Server Status & Supervisor Control */}
+            {/* Left Side: Supervisor Control (Server Status moved to UPLOAD view) */}
             <div className="flex items-center gap-3">
               
-              {/* Server Status Indicator */}
-              <div className={`hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
-                serverStatus === 'connected' 
-                  ? 'bg-green-50 text-green-700 border-green-200' 
-                  : serverStatus === 'disconnected'
-                  ? 'bg-red-50 text-red-700 border-red-200'
-                  : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-              }`}>
-                {serverStatus === 'connected' ? (
-                  <>
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                    </span>
-                    <span>متصل بالسيرفر</span>
-                  </>
-                ) : serverStatus === 'disconnected' ? (
-                  <>
-                    <WifiOff className="w-3.5 h-3.5" />
-                    <span>غير متصل</span>
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>جاري الاتصال...</span>
-                  </>
-                )}
-              </div>
-
               {/* Only show Supervisor Icon if NOT in upload mode (to login) */}
               {appState !== AppState.UPLOAD ? (
                 <button 
@@ -370,6 +355,39 @@ const App: React.FC = () => {
 
                {/* Warning/Upload Action */}
                <div className="lg:col-span-1 space-y-6">
+                  
+                  {/* Server Status for Supervisor */}
+                  <div className={`flex items-center justify-between p-3 rounded-xl border ${
+                    serverStatus === 'connected' 
+                      ? 'bg-green-50 text-green-700 border-green-200' 
+                      : serverStatus === 'disconnected'
+                      ? 'bg-red-50 text-red-700 border-red-200'
+                      : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                  }`}>
+                    <span className="text-xs font-bold">حالة السيرفر:</span>
+                    <div className="flex items-center gap-1.5 text-xs font-medium">
+                      {serverStatus === 'connected' ? (
+                        <>
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                          </span>
+                          <span>متصل</span>
+                        </>
+                      ) : serverStatus === 'disconnected' ? (
+                        <>
+                          <WifiOff className="w-3.5 h-3.5" />
+                          <span>غير متصل</span>
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          <span>جاري الاتصال...</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Stats Card for Supervisor */}
                   <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
                     <div>
@@ -491,14 +509,16 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Print Button */}
-                <button 
-                  onClick={() => window.print()}
-                  className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium print:hidden"
-                >
-                  <FileText className="w-4 h-4" />
-                  طباعة السجل / حفظ صيغة PDF
-                </button>
+                <div className="flex flex-col gap-2 items-end">
+                   {/* Print Button */}
+                   <button 
+                    onClick={() => window.print()}
+                    className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium print:hidden w-full md:w-auto justify-center"
+                   >
+                    <FileText className="w-4 h-4" />
+                    طباعة السجل / حفظ صيغة PDF
+                   </button>
+                </div>
               </div>
 
               {/* Dynamic Student Details Grid - Sorted */}
@@ -594,8 +614,8 @@ const App: React.FC = () => {
         </div>
       )}
     </div>
+    </ErrorBoundary>
   );
 };
 
 export default App;
-    
