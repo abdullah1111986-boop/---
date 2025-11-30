@@ -10,12 +10,19 @@ import { TraineeProfile, AppState } from './types';
 const SUPERVISOR_PASSWORD = '0558882711';
 
 // Error Boundary for basic runtime safety
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
-  constructor(props: {children: React.ReactNode}) {
-    super(props);
-    this.state = { hasError: false };
-  }
+interface ErrorBoundaryProps {
+  children?: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false };
+
   static getDerivedStateFromError() { return { hasError: true }; }
+
   render() {
     if (this.state.hasError) return <div className="p-8 text-center text-red-600">حدث خطأ غير متوقع. يرجى تحديث الصفحة.</div>;
     return this.props.children;

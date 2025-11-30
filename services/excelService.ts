@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import { read, utils } from 'xlsx';
 import { RawRow, TraineeProfile } from '../types';
 
 /**
@@ -17,10 +17,12 @@ export const parseExcelData = async (file: File): Promise<TraineeProfile[]> => {
     reader.onload = (e) => {
       try {
         const data = e.target?.result;
-        const workbook = XLSX.read(data, { type: 'binary' });
+        // Use read from named import
+        const workbook = read(data, { type: 'binary' });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json<RawRow>(sheet);
+        // Use utils from named import
+        const jsonData = utils.sheet_to_json<RawRow>(sheet);
 
         const trainees = processRawData(jsonData);
         resolve(trainees);
