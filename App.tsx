@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component, ReactNode, ErrorInfo } from 'react';
 import { Search, RotateCcw, User, FileText, ChevronRight, Hash, Phone, Building, Info, Award, Calendar, GraduationCap, Lock, ShieldCheck, LogIn, ArrowRight, UserCog, X, FileSpreadsheet, Eye, EyeOff, Code, Users, Cloud, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import FileUpload from './components/FileUpload';
 import TranscriptTable from './components/TranscriptTable';
@@ -11,14 +11,14 @@ const SUPERVISOR_PASSWORD = '0558882711';
 
 // Error Boundary for basic runtime safety
 interface ErrorBoundaryProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return { hasError: true };
   }
 
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error", error, errorInfo);
   }
 
@@ -142,10 +142,7 @@ const App: React.FC = () => {
       // 1. Check ID (Exact match)
       if (t.id === term) return true;
       
-      // 2. Check Name (Partial match)
-      if (t.name.includes(term)) return true;
-
-      // 3. Check Mobile Number (Search inside details)
+      // 2. Check Mobile Number (Search inside details)
       const mobileMatch = Object.entries(t.details).some(([key, value]) => {
         const k = key.toLowerCase();
         const v = String(value).trim();
@@ -161,7 +158,7 @@ const App: React.FC = () => {
       setAppState(AppState.VIEW);
       setError(null);
     } else {
-      setError("لم يتم العثور على بيانات تطابق البحث (رقم تدريبي، اسم، أو جوال).");
+      setError("لم يتم العثور على بيانات تطابق البحث (رقم تدريبي أو جوال).");
     }
   };
 
@@ -467,7 +464,7 @@ const App: React.FC = () => {
                         type="text"
                         value={searchId}
                         onChange={(e) => setSearchId(e.target.value)}
-                        placeholder="الرقم التدريبي، الاسم، أو رقم الجوال..."
+                        placeholder="الرقم التدريبي أو رقم الجوال..."
                         className="w-full px-5 py-3 pr-12 rounded-xl border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all text-right"
                         autoFocus
                       />
