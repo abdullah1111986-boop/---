@@ -1,0 +1,5 @@
+{
+  "name": "Trainee Record System",
+  "description": "An Arabic-first application to view trainee transcripts from Excel files.",
+  "requestFramePermissions": []
+}
