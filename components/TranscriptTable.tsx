@@ -1,6 +1,6 @@
 import React from 'react';
 import { CourseRecord } from '../types';
-import { BookOpen, Check, X, AlertCircle } from 'lucide-react';
+import { BookOpen, Check, X, AlertCircle, Hash, Layers } from 'lucide-react';
 
 interface TranscriptTableProps {
   courses: CourseRecord[];
@@ -17,20 +17,22 @@ const TranscriptTable: React.FC<TranscriptTableProps> = ({ courses }) => {
     
     if (val === 'yes' || val === 'true') {
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center gap-1">
           <div className={`${type === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'} rounded-full p-1 shadow-sm`}>
             <Check className="w-3.5 h-3.5 stroke-[3]" />
           </div>
+          <span className="md:hidden text-xs font-bold text-emerald-600">مستوفى</span>
         </div>
       );
     }
     
     if (val === 'no' || val === 'false') {
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center gap-1">
           <div className="bg-rose-50 text-rose-400 rounded-full p-1">
             <X className="w-3.5 h-3.5" />
           </div>
+          <span className="md:hidden text-xs font-bold text-rose-400">غير مستوفى</span>
         </div>
       );
     }
@@ -40,8 +42,8 @@ const TranscriptTable: React.FC<TranscriptTableProps> = ({ courses }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="px-6 py-5 bg-white border-b border-slate-100 flex justify-between items-center">
-        <h3 className="font-bold text-slate-800 flex items-center gap-2.5 text-lg">
+      <div className="px-4 md:px-6 py-5 bg-white border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
+        <h3 className="font-bold text-slate-800 flex items-center gap-2.5 text-base md:text-lg">
           <div className="p-2 bg-primary-50 rounded-lg text-primary-600">
              <BookOpen className="w-5 h-5" />
           </div>
@@ -52,13 +54,57 @@ const TranscriptTable: React.FC<TranscriptTableProps> = ({ courses }) => {
         </span>
       </div>
       
-      <div className="overflow-x-auto">
+      {/* Mobile View: Cards */}
+      <div className="block md:hidden bg-slate-50 p-4 space-y-3">
+        {sortedCourses.length === 0 && (
+           <div className="text-center py-8 text-slate-400">لا توجد مقررات</div>
+        )}
+        {sortedCourses.map((course, index) => {
+           const isProject = course.courseName.includes('المشروع الإنتاجي');
+           return (
+             <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 relative overflow-hidden">
+               {/* Side strip based on status */}
+               <div className={`absolute top-0 right-0 bottom-0 w-1 ${String(course.isCompleted).toLowerCase() === 'yes' ? 'bg-emerald-400' : 'bg-slate-200'}`}></div>
+               
+               <div className="flex justify-between items-start mb-2 pr-3">
+                 <div className="flex items-center gap-2 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+                   <Hash className="w-3 h-3 text-slate-400" />
+                   <span className="text-xs font-mono font-bold text-slate-600">{course.courseCode || '---'}</span>
+                 </div>
+                 <div>
+                   {renderStatusIcon(course.isCompleted, 'success')}
+                 </div>
+               </div>
+
+               <h4 className="font-bold text-slate-800 text-sm mb-3 pr-3 leading-relaxed">
+                 {course.courseName}
+               </h4>
+
+               {isProject && (
+                  <div className="mb-3 mr-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    غير محسوب ضمن الخطة
+                  </div>
+                )}
+
+               <div className="flex items-center gap-2 pr-3 pt-3 border-t border-slate-50">
+                 <Layers className="w-3.5 h-3.5 text-slate-400" />
+                 <span className="text-xs text-slate-500">الوحدات المعتمدة:</span>
+                 <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">{course.credits || '-'}</span>
+               </div>
+             </div>
+           );
+        })}
+      </div>
+
+      {/* Desktop View: Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm text-right">
           <thead className="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
             <tr>
-              <th className="px-6 py-4 font-bold text-right text-[11px] tracking-wider">رمز المقرر</th>
+              <th className="px-6 py-4 font-bold text-right text-[11px] tracking-wider w-32">رمز المقرر</th>
               <th className="px-6 py-4 font-bold text-right text-[11px] tracking-wider">اسم المقرر</th>
-              <th className="px-6 py-4 font-bold text-center text-[11px] tracking-wider">الوحدات المعتمدة للمقرر</th>
+              <th className="px-6 py-4 font-bold text-center text-[11px] tracking-wider w-40">الوحدات المعتمدة للمقرر</th>
               <th className="px-4 py-4 font-bold text-center text-[11px] tracking-wider w-36 bg-emerald-50/50 text-emerald-700 border-l border-slate-100">
                 حالة المقرر/ مستوفى
               </th>
@@ -76,7 +122,7 @@ const TranscriptTable: React.FC<TranscriptTableProps> = ({ courses }) => {
                   <td className="px-6 py-4 font-bold text-slate-700">
                     {course.courseName}
                     {isProject && (
-                      <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm w-fit">
+                      <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50 shadow-sm w-fit block">
                         <AlertCircle className="w-3 h-3 shrink-0" />
                         غير محسوب ضمن الخطة حالياً
                       </div>

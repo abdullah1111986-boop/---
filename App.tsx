@@ -17,6 +17,7 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
+// Fix: Using a constructor to properly initialize state and ensure the TypeScript compiler recognizes inherited 'props' from React.Component
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -48,6 +49,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         </div>
       );
     }
+    // Fix: Explicitly return children from this.props to resolve property recognition error (Line 48)
     return this.props.children;
   }
 }
@@ -226,19 +228,19 @@ const App: React.FC = () => {
       {/* PROFESSIONAL HEADER */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-20 print:hidden shadow-sm transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-24 items-center">
+          <div className="flex flex-wrap justify-between min-h-[80px] py-3 items-center gap-4">
             
             {/* Logo Section */}
-            <div className="flex items-center gap-5">
-              <div className="hidden sm:flex relative items-center justify-center w-14 h-14 bg-gradient-to-tr from-primary-700 to-primary-900 rounded-2xl shadow-lg text-white transform hover:rotate-3 transition-transform duration-300">
-                <GraduationCap className="h-8 w-8" />
+            <div className="flex items-center gap-3 sm:gap-5">
+              <div className="hidden sm:flex relative items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-tr from-primary-700 to-primary-900 rounded-2xl shadow-lg text-white transform hover:rotate-3 transition-transform duration-300">
+                <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8" />
                 <div className="absolute inset-0 border-2 border-white/20 rounded-2xl"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-primary-600 tracking-wide mb-1 uppercase opacity-90">الكلية التقنية بالطائف</span>
-                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-none tracking-tight">نظام السجل التدريبي</h1>
+                <span className="text-[10px] sm:text-xs font-bold text-primary-600 tracking-wide mb-0.5 uppercase opacity-90">الكلية التقنية بالطائف</span>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-gray-900 leading-none tracking-tight">نظام السجل التدريبي</h1>
                 <div className="flex mt-1.5">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
                     قسم التقنية الميكانيكية
                   </span>
                 </div>
@@ -246,22 +248,23 @@ const App: React.FC = () => {
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto sm:ml-0">
               {appState !== AppState.UPLOAD ? (
                 <button 
                   onClick={openSupervisorLogin}
-                  className="group flex items-center justify-center w-11 h-11 text-slate-400 hover:text-primary-600 bg-transparent hover:bg-primary-50 rounded-xl transition-all duration-200 border border-transparent hover:border-primary-100"
+                  className="group flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 text-slate-400 hover:text-primary-600 bg-transparent hover:bg-primary-50 rounded-xl transition-all duration-200 border border-transparent hover:border-primary-100"
                   title="دخول المشرفين"
                 >
-                  <UserCog className="w-6 h-6 transform group-hover:scale-110 transition-transform" />
+                  <UserCog className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:scale-110 transition-transform" />
                 </button>
               ) : (
                 <button 
                   onClick={exitSupervisorMode}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-500 hover:text-white hover:bg-red-500 rounded-lg transition-all duration-200 border border-slate-200 hover:border-red-500"
+                  className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-white hover:bg-red-500 rounded-lg transition-all duration-200 border border-slate-200 hover:border-red-500"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="hidden sm:inline">خروج المشرف</span>
+                  <span className="inline sm:hidden">خروج</span>
                 </button>
               )}
             </div>
@@ -270,36 +273,36 @@ const App: React.FC = () => {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 print:py-0 print:max-w-none">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 print:py-0 print:max-w-none">
         
         {error && (
-          <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm flex items-center gap-3 animate-fade-in-up">
-            <Info className="w-5 h-5 shrink-0" />
+          <div className="mb-6 sm:mb-8 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm flex items-start sm:items-center gap-3 animate-fade-in-up text-sm sm:text-base">
+            <Info className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0" />
             <span className="font-medium">{error}</span>
           </div>
         )}
 
         {/* LOADING */}
         {isLoadingData && appState === AppState.SEARCH && (
-           <div className="flex flex-col items-center justify-center py-24 animate-pulse">
+           <div className="flex flex-col items-center justify-center py-20 sm:py-24 animate-pulse">
              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-5">
-               <RefreshCw className="w-10 h-10 text-primary-500 animate-spin" />
+               <RefreshCw className="w-8 h-8 sm:w-10 sm:h-10 text-primary-500 animate-spin" />
              </div>
-             <p className="text-slate-400 font-medium text-lg">جاري تهيئة النظام...</p>
+             <p className="text-slate-400 font-medium text-base sm:text-lg">جاري تهيئة النظام...</p>
            </div>
         )}
 
         {/* --- VIEW: UPLOAD DASHBOARD --- */}
         {appState === AppState.UPLOAD && (
-          <div className="animate-fade-in-up space-y-8">
-            <div className="flex items-center justify-between">
+          <div className="animate-fade-in-up space-y-6 sm:space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                <div>
-                  <h2 className="text-2xl font-bold text-slate-800">لوحة تحكم المشرف</h2>
-                  <p className="text-slate-500 mt-1">إدارة بيانات المتدربين وتحديث السجلات</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-800">لوحة تحكم المشرف</h2>
+                  <p className="text-slate-500 mt-1 text-sm sm:text-base">إدارة بيانات المتدربين وتحديث السجلات</p>
                </div>
                
                {/* Server Status Indicator */}
-               <div className={`flex items-center gap-3 px-4 py-2 rounded-full border shadow-sm ${
+               <div className={`self-start sm:self-center flex items-center gap-3 px-4 py-2 rounded-full border shadow-sm ${
                  serverStatus === 'connected' ? 'bg-white border-green-200 text-green-700' : 
                  serverStatus === 'disconnected' ? 'bg-white border-red-200 text-red-700' : 
                  'bg-white border-yellow-200 text-yellow-700'
@@ -311,15 +314,15 @@ const App: React.FC = () => {
                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                {/* Instructions Panel */}
-               <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+               <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden order-2 lg:order-1">
                  <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-slate-600" />
                     <h3 className="font-bold text-slate-700">دليل تنسيق الملفات</h3>
                  </div>
                  
-                 <div className="p-6">
+                 <div className="p-4 sm:p-6">
                     <div className="mb-6 bg-blue-50 border-blue-200 border px-4 py-3 rounded-xl flex gap-3 items-start">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
                       <div>
@@ -358,7 +361,7 @@ const App: React.FC = () => {
                </div>
 
                {/* Stats & Upload Panel */}
-               <div className="space-y-6">
+               <div className="space-y-6 order-1 lg:order-2">
                   {/* Count Card */}
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
                     <div>
@@ -391,24 +394,24 @@ const App: React.FC = () => {
 
         {/* --- VIEW: SEARCH (HERO) --- */}
         {appState === AppState.SEARCH && !isLoadingData && (
-          <div className="min-h-[60vh] flex flex-col items-center justify-center animate-fade-in-up">
+          <div className="min-h-[50vh] sm:min-h-[60vh] flex flex-col items-center justify-center animate-fade-in-up">
             
             <div className="relative w-full max-w-2xl mx-auto">
               {/* Decorative Blur */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary-400/20 rounded-full blur-3xl -z-10"></div>
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 sm:w-64 sm:h-64 bg-primary-400/20 rounded-full blur-3xl -z-10"></div>
               
-              <div className="bg-white/70 backdrop-blur-xl p-8 sm:p-10 rounded-3xl shadow-2xl border border-white/50 text-center relative overflow-hidden">
+              <div className="bg-white/70 backdrop-blur-xl p-6 sm:p-10 rounded-3xl shadow-2xl border border-white/50 text-center relative overflow-hidden mx-2 sm:mx-0">
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary-400 via-primary-600 to-primary-800"></div>
                 
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-50 to-white rounded-2xl border border-primary-100 flex items-center justify-center mx-auto mb-6 shadow-sm transform rotate-3 hover:rotate-0 transition-all duration-500">
-                  <Search className="w-10 h-10 text-primary-600" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary-50 to-white rounded-2xl border border-primary-100 flex items-center justify-center mx-auto mb-6 shadow-sm transform rotate-3 hover:rotate-0 transition-all duration-500">
+                  <Search className="w-8 h-8 sm:w-10 sm:h-10 text-primary-600" />
                 </div>
                 
-                <h2 className="text-3xl font-black text-slate-800 mb-3 tracking-tight">استعراض السجل التدريبي</h2>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-800 mb-3 tracking-tight">استعراض السجل التدريبي</h2>
                 
                 {trainees.length > 0 ? (
                   <>
-                    <p className="text-slate-500 mb-8 text-lg max-w-md mx-auto leading-relaxed">
+                    <p className="text-slate-500 mb-6 sm:mb-8 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
                        أدخل الرقم التدريبي أو رقم الجوال للوصول السريع إلى بيانات السجل الأكاديمي.
                     </p>
                     <form onSubmit={handleSearch} className="max-w-md mx-auto relative group">
@@ -418,10 +421,10 @@ const App: React.FC = () => {
                           value={searchId}
                           onChange={(e) => setSearchId(e.target.value)}
                           placeholder="الرقم التدريبي أو رقم الجوال..."
-                          className="w-full px-6 py-4 pr-14 rounded-2xl bg-white border-2 border-slate-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-right shadow-sm text-lg placeholder-slate-400 text-slate-800"
+                          className="w-full px-5 sm:px-6 py-3.5 sm:py-4 pr-12 sm:pr-14 rounded-2xl bg-white border-2 border-slate-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-right shadow-sm text-base sm:text-lg placeholder-slate-400 text-slate-800"
                           autoFocus
                         />
-                        <Hash className="absolute right-5 top-5 text-slate-400 group-focus-within:text-primary-500 transition-colors w-6 h-6" />
+                        <Hash className="absolute right-4 sm:right-5 top-4 sm:top-5 text-slate-400 group-focus-within:text-primary-500 transition-colors w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
                       
                       <div className="mt-4 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 px-2 gap-2">
@@ -431,19 +434,19 @@ const App: React.FC = () => {
 
                       <button
                         type="submit"
-                        className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary-200 hover:shadow-primary-300 active:scale-95 text-lg"
+                        className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 sm:py-4 rounded-xl transition-all shadow-lg shadow-primary-200 hover:shadow-primary-300 active:scale-95 text-base sm:text-lg"
                       >
                         عرض السجل الآن
                       </button>
                     </form>
                   </>
                 ) : (
-                  <div className="py-8 px-4">
+                  <div className="py-6 sm:py-8 px-4">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-slate-600 text-sm font-medium mb-4">
                        <Cloud className="w-4 h-4" />
                        <span>قاعدة البيانات فارغة</span>
                     </div>
-                    <p className="text-slate-500 mb-6 max-w-sm mx-auto">
+                    <p className="text-slate-500 mb-6 max-w-sm mx-auto text-sm sm:text-base">
                       لم يتم رفع أي بيانات بعد. يرجى من المشرف تسجيل الدخول ورفع ملف السجل التدريبي لبدء العمل.
                     </p>
                   </div>
@@ -451,7 +454,7 @@ const App: React.FC = () => {
               </div>
             </div>
             
-            <p className="mt-8 text-slate-400 text-sm font-medium">نظام آمن ومحمي لبيانات المتدربين</p>
+            <p className="mt-8 text-slate-400 text-xs sm:text-sm font-medium">نظام آمن ومحمي لبيانات المتدربين</p>
           </div>
         )}
 
@@ -459,10 +462,10 @@ const App: React.FC = () => {
         {appState === AppState.VIEW && currentTrainee && (
           <div className="animate-fade-in-up pb-10">
             {/* Navigation */}
-            <div className="max-w-6xl mx-auto mb-6 flex items-center justify-between no-print">
+            <div className="max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 no-print">
                <button 
                   onClick={resetSearch}
-                  className="group flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary-700 transition-colors bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-200 hover:border-primary-200"
+                  className="group flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary-700 transition-colors bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-200 hover:border-primary-200 w-full sm:w-auto justify-center sm:justify-start"
                 >
                   <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center group-hover:bg-primary-100 transition-colors">
                     <ArrowRight className="w-3 h-3" />
@@ -472,7 +475,7 @@ const App: React.FC = () => {
                 
                 <button 
                   onClick={() => window.print()}
-                  className="flex items-center gap-2 px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-all shadow-md hover:shadow-lg text-sm font-bold"
+                  className="flex items-center justify-center gap-2 px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-all shadow-md hover:shadow-lg text-sm font-bold w-full sm:w-auto"
                 >
                   <FileText className="w-4 h-4" />
                   طباعة / PDF
@@ -480,17 +483,17 @@ const App: React.FC = () => {
             </div>
 
             {/* Student Profile Card */}
-            <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+            <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6 sm:mb-8">
               {/* Card Header */}
-              <div className="relative bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white overflow-hidden">
+              <div className="relative bg-gradient-to-r from-slate-900 to-slate-800 p-6 sm:p-8 text-white overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-right">
-                  <div className="w-20 h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
-                    <User className="w-10 h-10 text-white" />
+                <div className="relative z-10 flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-start text-center md:text-right">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 backdrop-blur rounded-2xl flex items-center justify-center border border-white/20 shadow-inner shrink-0">
+                    <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <h1 className="text-3xl font-bold mb-2 tracking-tight">{currentTrainee.name}</h1>
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-slate-300 text-sm font-medium font-mono">
+                  <div className="flex-1 w-full">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2 tracking-tight break-words">{currentTrainee.name}</h1>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-4 text-slate-300 text-sm font-medium font-mono">
                       <span className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/10">
                         <Hash className="w-4 h-4" />
                         {currentTrainee.id}
@@ -507,20 +510,20 @@ const App: React.FC = () => {
               </div>
 
               {/* Data Grid */}
-              <div className="p-8 bg-white">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+              <div className="p-4 sm:p-8 bg-white">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 sm:mb-6 flex items-center gap-2">
                   <Info className="w-4 h-4" />
                   البيانات الأكاديمية والشخصية
                 </h3>
                 
                 {Object.keys(currentTrainee.details).length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                     {getSortedDetails(currentTrainee.details).map(([key, value]) => {
                       if(key === 'القسم') return null; // Already shown in header
                       return (
-                        <div key={key} className="group bg-slate-50 hover:bg-white p-4 rounded-xl border border-slate-100 hover:border-primary-100 hover:shadow-md transition-all duration-200">
+                        <div key={key} className="group bg-slate-50 hover:bg-white p-3 sm:p-4 rounded-xl border border-slate-100 hover:border-primary-100 hover:shadow-md transition-all duration-200">
                           <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-primary-600 group-hover:bg-primary-50 group-hover:border-primary-100 transition-colors">
+                            <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-primary-600 group-hover:bg-primary-50 group-hover:border-primary-100 transition-colors shrink-0">
                                {getDetailIcon(key)}
                             </div>
                             <span className="text-xs font-bold text-slate-500 uppercase">{key}</span>
@@ -539,6 +542,19 @@ const App: React.FC = () => {
             {/* Transcript Table */}
             <div className="max-w-6xl mx-auto">
               <TranscriptTable courses={currentTrainee.courses} />
+              
+              {/* Important Note Section */}
+              <div className="mt-6 p-5 bg-primary-50/50 border border-primary-100 rounded-2xl shadow-sm animate-fade-in-up">
+                <div className="flex gap-4 items-start">
+                  <div className="p-2.5 bg-white rounded-xl shadow-sm text-primary-600 shrink-0">
+                    <Info className="w-5 h-5" />
+                  </div>
+                  <div className="text-sm leading-relaxed text-slate-700">
+                    <span className="font-bold text-primary-900 block mb-1">توضيح هـام:</span>
+                    أن كلمة <span className="font-bold text-emerald-700 underline decoration-emerald-200 decoration-2 underline-offset-4">مستوفى</span> تعني أن المتدرب (مجتاز المقرر أو المقرر مسجل لديه في الجدول ولم يتم اجتياز المقرر بعد)؛ لذلك فهذا السجل يخدم المتدربين لمعرفة المواد المتبقية لهم ولم تسجل في الجداول التدريبية.
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="mt-8 text-center text-xs text-slate-400 print:mt-12">
@@ -549,8 +565,8 @@ const App: React.FC = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="mt-auto bg-white border-t border-slate-200 py-8 print:hidden">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="mt-auto bg-white border-t border-slate-200 py-6 sm:py-8 print:hidden">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
              <GraduationCap className="w-5 h-5 text-primary-600" />
              <span>نظام السجل التدريبي</span>
@@ -570,7 +586,7 @@ const App: React.FC = () => {
       {/* MODAL */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100 border border-white/20">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-sm overflow-hidden transform transition-all scale-100 border border-white/20">
             <div className="bg-slate-50 p-5 border-b border-slate-100 flex justify-between items-center">
               <h3 className="font-bold text-slate-800 flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-primary-600" />
